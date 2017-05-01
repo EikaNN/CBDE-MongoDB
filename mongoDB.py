@@ -357,6 +357,12 @@ def query4(collection: Collection, order_date: str, region: str):
                 {"order.orderdate": {"$lt": add_one_year(order_date)}}
             ]
         }},
+        {"$redact":
+            {"$cond": [
+                {"$eq": ["$partsupp.supplier.nation.nation_key", "$order.customer.nation.nation_key"]},
+                "$$KEEP", "$$PRUNE"
+            ]
+        }},
         {"$project": {
             "n_name": "$partsupp.supplier.nation.name",
             "l_extendedprice": "$extendedprice",
